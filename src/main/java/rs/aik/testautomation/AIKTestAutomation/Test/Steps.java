@@ -1369,10 +1369,10 @@ public class Steps {
         hp.EnterTextToElementWithClick(element, password);
     }
 
-    @And("Login to application using credentials from excel")
-    public void loginToApplicationUsingCredentialsFromExcel() throws Throwable {
-        String username = DataManager.getDataFromHashDatamap("1", "username");
-        String password = DataManager.getDataFromHashDatamap("1", "password");
+    @And("Login to application using credentials from excel {string}")
+    public void loginToApplicationUsingCredentialsFromExcel(String rowindex) throws Throwable {
+        String username = DataManager.getDataFromHashDatamap(rowindex, "username");
+        String password = DataManager.getDataFromHashDatamap(rowindex, "password");
         WebElement elementUsername = SelectById.CreateElementById("username");
         hp.EnterTextToElementWithClick(elementUsername, username);
         WebElement elementPassword = SelectById.CreateElementById("password");
@@ -1465,9 +1465,9 @@ public class Steps {
         }
     }
 
-    @And("Enter {string} from Excel")
-    public void enterFromExcel(String columnName) throws Throwable {
-        String crn = DataManager.getDataFromHashDatamap("1", columnName);
+    @And("Enter {string} from Excel {string}")
+    public void enterFromExcel(String columnName, String rowindex) throws Throwable {
+        String crn = DataManager.getDataFromHashDatamap(rowindex, columnName);
         WebElement element = SelectById.CreateElementById("field");
         hp.EnterTextToElementWithClick(element, crn);
     }
@@ -1499,8 +1499,10 @@ public class Steps {
         //driver.switchTo().defaultContent();
     }
 
-    @And("Assert field {string} in company review page has value from excel")
-    public void assertFieldInCompanyReviewPageHasValueFromExcel(String fieldName) throws Throwable {
+
+
+    @And("Assert field {string} in company review page has value from excel {string}")
+    public void assertFieldInCompanyReviewPageHasValueFromExcel(String fieldName, String rowindex) throws Throwable {
         WebDriverWait wait = new WebDriverWait(driver, 10);
 //
 //        // Step 1: Wait for page to fully load
@@ -1521,25 +1523,25 @@ public class Steps {
 //        // Step3: Switch into it
 //        driver.switchTo().frame(iframe);
         if (fieldName.equals("Company name")){
-            String expected = DataManager.getDataFromHashDatamap("1", "company_name");
+            String expected = DataManager.getDataFromHashDatamap(rowindex, "company_name");
             wait.until(ExpectedConditions.textToBe(
                     By.xpath("//label[text()='Company name']/following-sibling::div"),
                     expected
             ));
         } else if (fieldName.equals("Registration number")){
-            String expected = DataManager.getDataFromHashDatamap("1", "company_registration_number");
+            String expected = DataManager.getDataFromHashDatamap(rowindex, "company_registration_number");
             wait.until(ExpectedConditions.textToBe(
                     By.xpath("//label[text()='Registration number']/following-sibling::div"),
                     expected
             ));
         } else if (fieldName.equals("Tax identification number")){
-            String expected = DataManager.getDataFromHashDatamap("1", "tax_identification_number");
+            String expected = DataManager.getDataFromHashDatamap(rowindex, "tax_identification_number");
             wait.until(ExpectedConditions.textToBe(
                     By.xpath("//label[text()='Tax identification number']/following-sibling::div"),
                     expected
             ));
         } else if (fieldName.equals("Company address")){
-            String expected = DataManager.getDataFromHashDatamap("1", "company_address");
+            String expected = DataManager.getDataFromHashDatamap(rowindex, "company_address");
             wait.until(ExpectedConditions.textToBe(
                     By.xpath("//label[text()='Company address']/following-sibling::div"),
                     expected
@@ -1549,10 +1551,9 @@ public class Steps {
             Assert.fail();
         }
     }
-
-    @And("Assert input field for {string} in company review page has value from excel")
-    public void assertInputFieldForInCompanyReviewPageHasValueFromExcel(String id) throws Throwable {
-        String expected = DataManager.getDataFromHashDatamap("1", id);
+    @And("Assert input field for {string} in company review page has value from excel {string}")
+    public void assertInputFieldForInCompanyReviewPageHasValueFromExcel(String id, String rowindex) throws Throwable {
+        String expected = DataManager.getDataFromHashDatamap(rowindex, id);
         WebElement element = SelectById.CreateElementById(id);
         String actual = element.getAttribute("value");
         Assert.assertEquals(expected, actual);
@@ -1671,10 +1672,10 @@ public class Steps {
         WaitHelpers.WaitForElement(el);
     }
 
-    @And("Assert company owner in company data page has value from excel")
-    public void assertCompanyOwnerInCompanyDataPageHasValueFromExcel() throws Throwable {
-        String expectedFirstName = DataManager.getDataFromHashDatamap("1", "company_owner_first_name");
-        String expectedLastName = DataManager.getDataFromHashDatamap("1", "company_owner_last_name");
+    @And("Assert company owner in company data page has value from excel {string}")
+    public void assertCompanyOwnerInCompanyDataPageHasValueFromExcel(String rowindex) throws Throwable {
+        String expectedFirstName = DataManager.getDataFromHashDatamap(rowindex, "company_owner_first_name");
+        String expectedLastName = DataManager.getDataFromHashDatamap(rowindex, "company_owner_last_name");
 
         WebElement elementForFirstName = SelectByXpath.CreateElementByXpath("//*[@data-bind='text: firstname']");
         WebElement elementForLastName = SelectByXpath.CreateElementByXpath("//*[@data-bind='text: lastname']");

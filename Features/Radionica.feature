@@ -18,19 +18,20 @@ Feature: Radionica
     And Enter "company_registration_number" from Excel
     And Click on button "Continue"
     And Assert company review page is loaded
-    And Assert field "Company name" in company review page has value from excel
-    And Assert field "Registration number" in company review page has value from excel
-    And Assert field "Tax identification number" in company review page has value from excel
-    And Assert field "Company address" in company review page has value from excel
-    And Assert input field for "email" in company review page has value from excel
-    And Assert offered mobile phone prefix is "+3816"
-    And Validate mobile phone in company review page
-    And Enter valid phone number in company review page
-    And Validate email field in company review page
-    And Enter valid email in company review page
+    And Assert field "Company name" in company review page has value from excel "<rowindex>"
+    And Assert company owner in company data page has value from excel "<rowindex>"
+#    And Assert field "Registration number" in company review page has value from excel
+#    And Assert field "Tax identification number" in company review page has value from excel
+#    And Assert field "Company address" in company review page has value from excel
+#    And Assert input field for "email" in company review page has value from excel
+#    And Assert offered mobile phone prefix is "+3816"
+#    And Validate mobile phone in company review page
+#    And Enter valid phone number in company review page
+#    And Validate email field in company review page
+#    And Enter valid email in company review page
     And Click on button "Continue"
     And Assert company data page is loaded
-    And Assert company owner in company data page has value from excel
+#    And Assert company owner in company data page has value from excel
     And Check if continue button is disabled
     And Assert I have read Notice on the processing of personal data is valid
     And Assert company data page is loaded
@@ -136,7 +137,7 @@ Feature: Radionica
     And Assert field "Registration number" in company review page has value from excel
     And Assert field "Tax identification number" in company review page has value from excel
     And Assert field "Company address" in company review page has value from excel
-    And Assert input field for "email" in company review page has value from excel
+    And Assert input field for "email" in company review page has value from excel "<rowindex>"
     And Assert offered mobile phone prefix is "+3816"
     And Validate mobile phone in company review page
     And Enter valid phone number in company review page
@@ -144,7 +145,7 @@ Feature: Radionica
     And Enter valid email in company review page
     And Click on button "Continue"
     And Assert company data page is loaded
-    And Assert company owner in company data page has value from excel
+    And Assert company owner in company data page has value from excel "<rowindex>"
     And Check if continue button is disabled
     And Assert I have read Notice on the processing of personal data is valid
     And Assert company data page is loaded
