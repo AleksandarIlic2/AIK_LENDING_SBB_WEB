@@ -1,6 +1,8 @@
 package rs.aik.testautomation.AIKTestAutomation.Test;
+import io.cucumber.java.en_scouse.An;
 import jakarta.mail.MessagingException;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import rs.aik.testautomation.AIKTestAutomation.Action.ActionApiHelpers;
@@ -39,6 +41,7 @@ public class Steps {
     HTTPAction ha = new HTTPAction();
     MobileAction ma = new MobileAction();
     Base b = new Base();
+    private WebDriver driver;
     //endregion - Parameters -
 
     //region - Basic methods -
@@ -991,7 +994,7 @@ public class Steps {
 
     @And("Refresh page")
     public void refreshPage() {
-        driver.navigate().refresh();
+        Base.driver.navigate().refresh();
     }
 
     @And("Close current tab")
@@ -1111,7 +1114,7 @@ public class Steps {
     public void assertUrlIsOpened(String expected) {
         hp.switchToTabWithIndex(2);
         WaitHelpers.waitForSeconds(10);
-        String URL = driver.getCurrentUrl();
+        String URL = Base.driver.getCurrentUrl();
         Assert.assertEquals(expected,URL);
         JSHelpers.closeCurrentTab();
         hp.switchToTabWithIndex(1);
@@ -1449,11 +1452,11 @@ public class Steps {
     public void selectAsIdentifierType(String identifier) throws Throwable {
         WaitHelpers.waitForSeconds(5);
         if (identifier.equals("TIN")){
-            WebElement element = driver.findElement(By.xpath("//div[contains(text(),'TIN')]"));
-            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+            WebElement element = Base.driver.findElement(By.xpath("//div[contains(text(),'TIN')]"));
+            ((JavascriptExecutor) Base.driver).executeScript("arguments[0].click();", element);
         } else if (identifier.equals("CRN")){
-            driver.switchTo().frame(0);
-            WebDriverWait wait = new WebDriverWait(driver, 10);
+            Base.driver.switchTo().frame(0);
+            WebDriverWait wait = new WebDriverWait(Base.driver, 10);
             WebElement element = wait.until(
                     ExpectedConditions.elementToBeClickable(
                             By.xpath("//div[contains(@class,'toggle-option') and normalize-space(text())='CRN']")
@@ -1474,7 +1477,7 @@ public class Steps {
 
     @And("Assert company review page is loaded")
     public void assertCompanyReviewPageIsLoaded() throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebDriverWait wait = new WebDriverWait(Base.driver, 10);
 
         // Step 1: Wait for page to fully load
         wait.pollingEvery(Duration.ofMillis(500));
@@ -1492,8 +1495,34 @@ public class Steps {
         );
 
         // Step3: Switch into it
-        driver.switchTo().frame(iframe);
+        Base.driver.switchTo().frame(iframe);
         By el = SelectByXpath.CreateByElementByXpath("//*[contains(text(),'Please review your company details')]");
+        WaitHelpers.WaitForElement(el);
+        WaitHelpers.waitForSeconds(3);
+        //driver.switchTo().defaultContent();
+    }
+    @And("Assert confirm your role page is loaded")
+    public void assertConfirmYourRolePageIsLoaded() throws InterruptedException {
+        WebDriverWait wait = new WebDriverWait(Base.driver, 10);
+
+        // Step 1: Wait for page to fully load
+        wait.pollingEvery(Duration.ofMillis(500));
+
+        wait.until(webDriver -> {
+            ((JavascriptExecutor) webDriver)
+                    .executeScript("return document.readyState").equals("complete");
+            return webDriver.findElements(By.tagName("iframe")).size() > 0;
+        });
+
+
+        // Step 2: Wait for iframe to appear in DOM
+        WebElement iframe = wait.until(
+                ExpectedConditions.presenceOfElementLocated(By.tagName("iframe"))
+        );
+
+        // Step3: Switch into it
+        Base.driver.switchTo().frame(iframe);
+        By el = SelectByXpath.CreateByElementByXpath("//*[contains(text(),'Confirm your role in the company')]");
         WaitHelpers.WaitForElement(el);
         WaitHelpers.waitForSeconds(3);
         //driver.switchTo().defaultContent();
@@ -1503,7 +1532,7 @@ public class Steps {
 
     @And("Assert field {string} in company review page has value from excel {string}")
     public void assertFieldInCompanyReviewPageHasValueFromExcel(String fieldName, String rowindex) throws Throwable {
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebDriverWait wait = new WebDriverWait(Base.driver, 10);
 //
 //        // Step 1: Wait for page to fully load
 //        wait.pollingEvery(Duration.ofMillis(500));
@@ -1551,6 +1580,8 @@ public class Steps {
             Assert.fail();
         }
     }
+
+
     @And("Assert input field for {string} in company review page has value from excel {string}")
     public void assertInputFieldForInCompanyReviewPageHasValueFromExcel(String id, String rowindex) throws Throwable {
         String expected = DataManager.getDataFromHashDatamap(rowindex, id);
@@ -1575,7 +1606,7 @@ public class Steps {
 
     @And("Validate mobile phone in company review page")
     public void validateMobilePhoneInCompanyReviewPage() throws Throwable {
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebDriverWait wait = new WebDriverWait(Base.driver, 10);
 
         //Entering less than 7 numbers to trigger validation error
         WebElement elementForEnteringSixNumbers = SelectById.CreateElementById("mobile");
@@ -1598,7 +1629,7 @@ public class Steps {
 
     @And("Validate email field in company review page")
     public void validateEmailFieldInCompanyReviewPage() throws Throwable {
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebDriverWait wait = new WebDriverWait(Base.driver, 10);
 
         //Entering blank email to trigger validation error
         WebElement element1 = SelectById.CreateElementById("email");
@@ -1649,7 +1680,7 @@ public class Steps {
 
     @And("Assert company data page is loaded")
     public void assertCompanyDataPageIsLoaded() throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebDriverWait wait = new WebDriverWait(Base.driver, 10);
 
         // Step 1: Wait for page to fully load
         wait.pollingEvery(Duration.ofMillis(500));
@@ -1667,7 +1698,7 @@ public class Steps {
         );
 
         // Step3: Switch into it
-        driver.switchTo().frame(iframe);
+        Base.driver.switchTo().frame(iframe);
         By el = SelectByXpath.CreateByElementByXpath("//*[text()='Company data']");
         WaitHelpers.WaitForElement(el);
     }
@@ -1677,14 +1708,17 @@ public class Steps {
         String expectedFirstName = DataManager.getDataFromHashDatamap(rowindex, "company_owner_first_name");
         String expectedLastName = DataManager.getDataFromHashDatamap(rowindex, "company_owner_last_name");
 
-        WebElement elementForFirstName = SelectByXpath.CreateElementByXpath("//*[@data-bind='text: firstname']");
-        WebElement elementForLastName = SelectByXpath.CreateElementByXpath("//*[@data-bind='text: lastname']");
+      //  WebElement elementForFirstName = SelectByXpath.CreateElementByXpath("//*[@data-bind='text: firstname']");
+      //  WebElement elementForLastName = SelectByXpath.CreateElementByXpath("//*[@data-bind='text: lastname']");
 
-        String actualFirstname = elementForFirstName.getAttribute("textContent");
-        String actualLastName = elementForLastName.getAttribute("textContent");
+//        String actualFirstname = elementForFirstName.getAttribute("textContent");
+//        String actualLastName = elementForLastName.getAttribute("textContent");
 
-        Assert.assertEquals(expectedFirstName,actualFirstname);
-        Assert.assertEquals(expectedLastName,actualLastName);
+//        Assert.assertEquals(expectedFirstName,actualFirstname);
+//        Assert.assertEquals(expectedLastName,actualLastName);
+
+        WebElement name = SelectByXpath.CreateElementByXpath("//*[@data-bind=\"text: firstname() + ' ' + lastname()\"]");
+        Assert.assertEquals(expectedFirstName + " " + expectedLastName,name.getText().trim());
     }
 
     @And("Check if continue button is disabled")
@@ -1701,7 +1735,7 @@ public class Steps {
         hp.ClickOnElement(element);
         hp.switchToTabWithIndex(2);
         WaitHelpers.waitForSeconds(3);
-        String URL = driver.getCurrentUrl();
+        String URL = Base.driver.getCurrentUrl();
         assertEquals("https://aik-group.com/personal-data-processing/", URL);
         JSHelpers.closeCurrentTab();
         hp.switchToTabWithIndex(1);
@@ -1716,7 +1750,7 @@ public class Steps {
 
     @And("Assert contact details page is loaded")
     public void assertContactDetailsPageIsLoaded() throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebDriverWait wait = new WebDriverWait(Base.driver, 10);
 
         // Step 1: Wait for page to fully load
         wait.pollingEvery(Duration.ofMillis(500));
@@ -1734,7 +1768,7 @@ public class Steps {
         );
 
         // Step3: Switch into it
-        driver.switchTo().frame(iframe);
+        Base.driver.switchTo().frame(iframe);
         By el = SelectByXpath.CreateByElementByXpath("//*[text()='Let's continue with mobile and email verification']");
         WaitHelpers.WaitForElement(el);
     }
@@ -1801,7 +1835,7 @@ public class Steps {
 
     @And("Assert email confirmed page is loaded")
     public void assertEmailConfirmedPageIsLoaded() throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebDriverWait wait = new WebDriverWait(Base.driver, 10);
 
         // Step 1: Wait for page to fully load
         wait.pollingEvery(Duration.ofMillis(500));
@@ -1819,14 +1853,14 @@ public class Steps {
         );
 
         // Step3: Switch into it
-        driver.switchTo().frame(iframe);
+        Base.driver.switchTo().frame(iframe);
         By el = SelectByXpath.CreateByElementByXpath("//*[text()='Email confirmed']");
         WaitHelpers.WaitForElement(el);
     }
 
     @And("Assert phone number verification page is loaded")
     public void assertPhoneNumberVerificationPageIsLoaded() throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebDriverWait wait = new WebDriverWait(Base.driver, 10);
 
         // Step 1: Wait for page to fully load
         wait.pollingEvery(Duration.ofMillis(500));
@@ -1844,7 +1878,7 @@ public class Steps {
         );
 
         // Step3: Switch into it
-        driver.switchTo().frame(iframe);
+        Base.driver.switchTo().frame(iframe);
         By el = SelectByXpath.CreateByElementByXpath("//*[text()='Phone number verification']");
         WaitHelpers.WaitForElement(el);
     }
@@ -1852,13 +1886,13 @@ public class Steps {
     @And("Enter otp from key {string}")
     public void enterOtpFromKey(String key) {
         String otp = (String) DataManager.userObject.get(key);
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebDriverWait wait = new WebDriverWait(Base.driver, 10);
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.cssSelector(".otp-input")
         ));
 
-        List<WebElement> otpInputs = driver.findElements(By.cssSelector(".otp-input"));
+        List<WebElement> otpInputs = Base.driver.findElements(By.cssSelector(".otp-input"));
 
         for (int i = 0; i < otp.length(); i++) {
             WebElement input = otpInputs.get(i);
@@ -1869,7 +1903,7 @@ public class Steps {
 
     @And("Assert consent page is loaded")
     public void assertConsentPageIsLoaded() throws InterruptedException {
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebDriverWait wait = new WebDriverWait(Base.driver, 10);
 
         // Step 1: Wait for page to fully load
         wait.pollingEvery(Duration.ofMillis(500));
@@ -1887,7 +1921,7 @@ public class Steps {
         );
 
         // Step3: Switch into it
-        driver.switchTo().frame(iframe);
+        Base.driver.switchTo().frame(iframe);
         By el = SelectByXpath.CreateByElementByXpath("//*[text()='Consent']");
         WaitHelpers.WaitForElement(el);
     }
@@ -1928,7 +1962,7 @@ public class Steps {
         // Step3: Switch into it
 //        driver.switchTo().frame(iframe);
         WaitHelpers.waitForSeconds(5);
-        driver.switchTo().defaultContent();
+        Base.driver.switchTo().defaultContent();
         By el = SelectByXpath.CreateByElementByXpath("//*[text()='COMPANY - REN 021']");
         WaitHelpers.WaitForElement(el);
 
@@ -1945,7 +1979,7 @@ public class Steps {
 
     @And("Assert that the application cannot be completed online")
     public void assertThatTheApplicationCannotBeCompletedOnline() throws Throwable {
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebDriverWait wait = new WebDriverWait(Base.driver, 10);
 //
 //        // Step 1: Wait for page to fully load
 //        wait.pollingEvery(Duration.ofMillis(500));
@@ -1965,9 +1999,9 @@ public class Steps {
 //        // Step3: Switch into it
 //        driver.switchTo().frame(iframe);
         WaitHelpers.waitForSeconds(5);
-        driver.switchTo().defaultContent();
-        driver.switchTo().frame(0);
-        System.out.println(driver.getPageSource());
+        Base.driver.switchTo().defaultContent();
+        Base.driver.switchTo().frame(0);
+        System.out.println(Base.driver.getPageSource());
 
         WebElement element = wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
@@ -1976,6 +2010,172 @@ public class Steps {
         );
 
         Assert.assertTrue(element.isDisplayed());
+
+    }
+
+    @And("Assert there are no other info in confirm your role page")
+    public void assertThereAreNoOtherInfoInConfirmYourRolePage() {
+
+        List<WebElement> fields = driver.findElements(By.xpath("//div[@class='screen-wrapper']/div"));
+        Assert.assertEquals(2,fields.size());
+    }
+
+    @And("Check if consents are displayed and not checked")
+    public void checkIfConsentsAreDisplayedAndNotChecked() {
+
+        List<WebElement> consentRows = driver.findElements(By.cssSelector(".consent-checkbox-label"));
+        // ocekujemo tačno 3 obavezna consenta
+        Assert.assertEquals(3,consentRows.size());
+
+        String[] expectedConsentTexts = {
+                "Data Processing Document",
+                "electronic communication with the bank",
+                "verification of data in the Credit Bureau"
+        };
+
+        for (int i = 0; i < consentRows.size(); i++) {
+
+            WebElement row = consentRows.get(i);
+
+            // Checkbox postoji
+            WebElement checkbox = row.findElement(
+                    By.cssSelector("input[type='checkbox']")
+            );
+
+            Assert.assertNotNull(checkbox);
+
+            Assert.assertFalse(checkbox.isSelected()); //nije cekiran
+
+            // Provjera teksta consenta
+            String rowText = row.getText();
+            Assert.assertTrue(rowText.contains(expectedConsentTexts[i]));
+
+            // Provjera da postoji "*"
+            WebElement requiredMark = row.findElement(
+                    By.cssSelector(".red-text")
+            );
+
+            Assert.assertEquals("Required '*' mark missing for consent " + (i + 1), "*", requiredMark.getText().trim());
+        }
+
+        // Select all consents
+        WebElement selectAllCheckbox = driver.findElement(
+                By.xpath("//span[contains(text(),'Select all consents')]/preceding::input[@type='checkbox'][1]")
+        );
+        Assert.assertFalse("'Select all consents' checkbox should NOT be selected",selectAllCheckbox.isSelected());
+
+        WebElement selectAllText = driver.findElement(
+                By.xpath("//span[contains(text(),'Select all consents')]")
+        );
+
+        Assert.assertEquals( "Select all consents label is incorrect","Select all consents",selectAllText.getText().trim());
+
+        //Da li za prvi i drugi consent postoji link za preuzimanje fajla
+        WebElement firstConsentDownload = consentRows.get(0).findElement(By.cssSelector(".privacy-text-underlined"));
+        Assert.assertTrue("First consent should have downloadable document", firstConsentDownload.isDisplayed());
+
+        WebElement secondConsentDownload = consentRows.get(1).findElement(By.cssSelector(".privacy-text-underlined"));
+        Assert.assertTrue("Second consent should have downloadable document",secondConsentDownload.isDisplayed());
+
+        // treci nema download opciju
+        List<WebElement> thirdConsentDownload = consentRows.get(2).findElements(By.cssSelector(".privacy-text-underlined"));
+        Assert.assertEquals("Third consent should NOT have downloadable document", 0, thirdConsentDownload.size());
+    }
+
+    @And("Validate Select all consents")
+    public void validateSelectAllConsents() {
+
+        WebElement selectAllCheckbox = driver.findElement(
+                By.cssSelector("input[data-bind*='selectAllConsents']")
+        );
+
+        List<WebElement> consentCheckboxes = driver.findElements(
+                By.cssSelector(".consent-checkbox-label input[type='checkbox']")
+        );
+
+        selectAllCheckbox.click();
+
+        // sva polja moraju biti cekirana
+        for (WebElement checkbox : consentCheckboxes) {
+            Assert.assertTrue("Checkbox should be selected",checkbox.isSelected());
+        }
+        //odcekiraj select all - sva polja se vracaju u necekirana
+        selectAllCheckbox.click();
+        for (WebElement checkbox : consentCheckboxes) {
+            Assert.assertFalse("Checkbox should not be selected",checkbox.isSelected());
+        }
+
+    }
+    @And("Validate Continue button disabled withouth all consents")
+    public void validateContinueButtonDisabledWithoutAllConsents() {
+
+        public void validateContinueButtonDisabledWithoutAllRequiredConsents() {
+
+            List<WebElement> consentCheckboxes = driver.findElements(
+                    By.cssSelector(".consent-checkbox-label input[type='checkbox']")
+            );
+
+            WebElement continueButton = driver.findElement(
+                    By.cssSelector("button.primary")
+            );
+
+           //ako nijedan obavezni consent nije cekiran - continue disabled
+            for (WebElement checkbox : consentCheckboxes) {
+
+                if (checkbox.isSelected()) {
+                    checkbox.click();
+                }
+            }
+
+            Assert.assertFalse("Continue button should NOT be enabled when no consents are selected",continueButton.isEnabled());
+
+            //jedan cekiran - continue disabled
+
+            consentCheckboxes.get(0).click();
+
+            Assert.assertFalse("Continue button should NOT be enabled when only one consent is selected",continueButton.isEnabled());
+
+            consentCheckboxes.get(0).click();
+
+            //dva cekirana - continue disabled
+
+            consentCheckboxes.get(0).click();
+            consentCheckboxes.get(1).click();
+            Assert.assertFalse("Continue button should NOT be enabled when not all required consents are selected",continueButton.isEnabled());
+        }
+    }
+
+    @And("Validate Continue button enabled after all consents")
+    public void validateContinueButtonEnabledAfterAllConsents() {
+
+        List<WebElement> consentCheckboxes = driver.findElements(By.cssSelector(".consent-checkbox-label input[type='checkbox']"));
+
+        for (WebElement checkbox : consentCheckboxes) {
+            if (!checkbox.isSelected()) {
+                checkbox.click();
+            }
+        }
+
+        WebElement continueButton = driver.findElement(
+                By.cssSelector("button.primary")
+        );
+
+        Assert.assertTrue("Continue button should be enabled", continueButton.isEnabled());
+    }
+
+
+
+    @And("Confirm popup for cancel")
+    public void confirmPopupForCancel() {
+        WebElement popUp = driver.findElement(By.className("popup"));
+        popUp.isDisplayed();
+
+        WebElement continueRequest = driver.findElement(By.xpath("//button[contains(@text,\"Continue with your request\")]"));
+        continueRequest.isDisplayed();
+        continueRequest.isEnabled();
+        WebElement withdraw = driver.findElement(By.xpath("//button[contains(@text,\"Withdraw your request\")]"));
+        withdraw.isDisplayed();
+        withdraw.isEnabled();
 
     }
 }

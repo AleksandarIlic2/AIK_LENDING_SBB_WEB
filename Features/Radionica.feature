@@ -3,9 +3,10 @@ Feature: Radionica
   @Radionica_Test
   Scenario Outline: Radionica_Test
 
+    #KORAK 1 unos validnih podataka, Continue i Confirm your role str se otvara
     Given Open Login page
     And Wait for login page to load
-    And Login to application using credentials from excel
+    And Login to application using credentials from excel "<rowindex>"
 
     When Assert welcome back page has loaded
     And Select "Operation" as space to continue
@@ -15,24 +16,40 @@ Feature: Radionica
     And Assert "SBB & PI lending" is selected
     And Click on create button for process
     And Select "CRN" as identifier type
-    And Enter "company_registration_number" from Excel
+    And Enter "company_registration_number" from Excel "<rowindex>"
     And Click on button "Continue"
-    And Assert company review page is loaded
+    And Assert confirm your role page is loaded
+
+    #KORAK 3 todo provjeriti info sa CUBE?
+
+    #KORAK 4
     And Assert field "Company name" in company review page has value from excel "<rowindex>"
     And Assert company owner in company data page has value from excel "<rowindex>"
-#    And Assert field "Registration number" in company review page has value from excel
-#    And Assert field "Tax identification number" in company review page has value from excel
-#    And Assert field "Company address" in company review page has value from excel
-#    And Assert input field for "email" in company review page has value from excel
-#    And Assert offered mobile phone prefix is "+3816"
-#    And Validate mobile phone in company review page
-#    And Enter valid phone number in company review page
-#    And Validate email field in company review page
-#    And Enter valid email in company review page
+    And Assert there are no other info in confirm your role page
+
+
+    #KORAK 7 - Postoji opcija izbora zakonskog zastupnika koji aplicira
+    #KORAK 8 - Dugme "Back" je aktivno
+    #KORAK 9 - Dugme "Continue" je aktivno, klikom na "Continue" otvara se sledec ekran "Consent"
+    #TODO - drugi user
+
+    #KORAK 10-19  - Na ekranu„Consent “ prikazane su sve tri saglasnosti, nisu cekirane, ...
     And Click on button "Continue"
-    And Assert company data page is loaded
-#    And Assert company owner in company data page has value from excel
+
+    And Check if consents are displayed and not checked
     And Check if continue button is disabled
+    And Validate Select all consents
+    And Validate Continue button disabled withouth all consents
+    And Validate Continue button enabled after all consents
+    
+    And Click on button "Cancel"
+    And Confirm popup for cancel
+    And Click on button "Withdraw your request"
+
+#--------------------------------------------------------todo
+
+
+
     And Assert I have read Notice on the processing of personal data is valid
     And Assert company data page is loaded
     And Click on the toggle slider to confirm that I have read Notice on the processing of personal data
@@ -67,7 +84,7 @@ Feature: Radionica
 
     Given Open Login page
     And Wait for login page to load
-    And Login to application using credentials from excel
+    And Login to application using credentials from excel "<rowindex>"
 
     When Assert welcome back page has loaded
     And Select "Operation" as space to continue
@@ -77,7 +94,7 @@ Feature: Radionica
     And Assert "SBB & PI lending" is selected
     And Click on create button for process
     And Select "CRN" as identifier type
-    And Enter "company_registration_number_invalid" from Excel
+    And Enter "company_registration_number_invalid" from Excel "<rowindex>"
     And Click on button "Continue"
     And Assert company review page is loaded
     And Enter valid phone number in company review page
@@ -120,7 +137,7 @@ Feature: Radionica
 
     Given Open Login page
     And Wait for login page to load
-    And Login to application using credentials from excel
+    And Login to application using credentials from excel "<rowindex>"
 
     When Assert welcome back page has loaded
     And Select "Operation" as space to continue
@@ -130,13 +147,13 @@ Feature: Radionica
     And Assert "SBB & PI lending" is selected
     And Click on create button for process
     And Select "CRN" as identifier type
-    And Enter "company_registration_number" from Excel
+    And Enter "company_registration_number" from Excel "<rowindex>"
     And Click on button "Continue"
     And Assert company review page is loaded
-    And Assert field "Company name" in company review page has value from excel
-    And Assert field "Registration number" in company review page has value from excel
-    And Assert field "Tax identification number" in company review page has value from excel
-    And Assert field "Company address" in company review page has value from excel
+    And Assert field "Company name" in company review page has value from excel "<rowindex>"
+    And Assert field "Registration number" in company review page has value from excel "<rowindex>"
+    And Assert field "Tax identification number" in company review page has value from excel "<rowindex>"
+    And Assert field "Company address" in company review page has value from excel "<rowindex>"
     And Assert input field for "email" in company review page has value from excel "<rowindex>"
     And Assert offered mobile phone prefix is "+3816"
     And Validate mobile phone in company review page
