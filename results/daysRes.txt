@@ -1,0 +1,5 @@
+<TABLE id="table-3" class="table table-hover">
+<TR><TH>Date</TH><TH>2024-03-19</TH></TR>
+<TR><TD>Passed</TD><TD>0</TD></TR>
+<TR><TD>Fail</TD><TD>6</TD><TR>
+</TABLE>

@@ -1,0 +1,13 @@
+<TABLE id="table-1" class="table table-hover">
+<THead>
+<TR><TH>Scenario name</TH><TH>Result</TH></TR>
+</THead>
+<TBody>
+<TR><TD>PLA-492WEB_Placila_Interni_prenos:OR-VAR_EUR_Part_2</TD><TD>FAIL</TD></TR>
+<TR><TD>PLA_494_WEB_Placila_SEPA:Znotraj_NLB</TD><TD>FAIL</TD></TR>
+<TR><TD>PLA_494_WEB_Placila_SEPA:Znotraj_NLB_Part_2</TD><TD>FAIL</TD></TR>
+<TR><TD>PLA_497WEB-Placila-SEPA:Overdraft-NEGATIVEN</TD><TD>FAIL</TD></TR>
+<TR><TD>PLA-651_WEB_Placila_Tuja_Izven_obmocja_EGP_EUR</TD><TD>FAIL</TD></TR>
+<TR><TD>PLA_WEB-Carovnik_za_placila-Vnosna_polja</TD><TD>FAIL</TD></TR>
+</TBody>
+</TABLE>
