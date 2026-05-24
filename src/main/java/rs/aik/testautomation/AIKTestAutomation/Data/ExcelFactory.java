@@ -59,7 +59,7 @@ public class ExcelFactory {
             XSSFWorkbook workbook = new XSSFWorkbook(file);
             XSSFSheet sheet = workbook.getSheet(sheetName);
             Row HeaderRow = sheet.getRow(0);
-
+            System.out.println("BROJ REDOVA: " + sheet.getLastRowNum());
             for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
                 Row currentRow = sheet.getRow(i);
                 HashMap<String, String> currentHash = new HashMap<String, String>();
@@ -68,6 +68,7 @@ public class ExcelFactory {
                     String celija = new DataFormatter().formatCellValue(currentRow.getCell(j));
                     currentHash.put(HeaderRow.getCell(j).getStringCellValue(), celija);
                 }
+                System.out.println(currentHash);
                 mydata.add(currentHash);
             }
             file.close();

@@ -79,6 +79,57 @@ Feature: Radionica
       |        1 |
 
 
+    # Koraci 8,9,10 iz testa, useri: mb: 20024623, mb: 06290965
+@Vise_Vlasnika_Test
+Scenario Outline: Vise_Vlasnika_Test
+
+    #KORAK 1 unos validnih podataka, Continue i Confirm your role str se otvara
+  Given Open Login page
+  And Wait for login page to load
+  And Login to application using credentials from excel "<rowindex>"
+
+  When Assert welcome back page has loaded
+  And Select "Operation" as space to continue
+  And Click on origination menu item
+  And Click on New application
+  And Select "SBB & PI lending" process
+  And Assert "SBB & PI lending" is selected
+  And Click on create button for process
+  And Select "CRN" as identifier type
+  And Enter "company_registration_number" from Excel "<rowindex>"
+  And Click on button "Continue"
+  And Assert confirm your role page is loaded
+
+    #KORAK 3 todo provjeriti info sa CUBE?
+
+
+  # KORAK 8 - Mogucnost izbora vlasnika (provera da na pocetku nije izabran ni jedan kao i da ne moze vise od jednog izabrati)
+  And Assert only one representative can be selected at a time
+  And Click on element by text "Back"
+  # KORAK 9 Back button aktivan i kada nije selektovan zastupnik , user: 06290965
+  And Select "CRN" as identifier type
+  And Enter "company_registration_number" from Excel "6"
+  And Click on button "Continue"
+  And Assert confirm your role page is loaded
+  And Click on element by text "Back"
+  #KORAK 10
+  And Select "CRN" as identifier type
+  And Enter "company_registration_number" from Excel "6"
+  And Click on button "Continue"
+  And Assert confirm your role page is loaded
+  #And Wait for element by text "Confirm your role in the company"
+  #And Wait for element by text "Continue"
+  And Assert button "Continue" is not clickable
+  And Select first representative in company data page
+  And Click on button "Continue"
+  Then Assert consent page is loaded
+
+
+  Examples:
+    | rowindex |
+    |        5 |
+
+
   @Radionica_Test_2
   Scenario Outline: Radionica_Test_2
 

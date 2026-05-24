@@ -63,6 +63,23 @@ public class SelectByText {
     public static WebElement CreateElementByXpathIndex(String text, String index) throws Throwable {
         return SelectByXpath.CreateElementByXpath("(//*[text()='" + text + "'])[" + index + "]");
     }
+
+    public static WebElement CreateElementByXpathIndexContains(String text, String index) throws Throwable {
+        return SelectByXpath.CreateElementByXpath(
+                "(//*[contains(normalize-space(.),'" + text + "')])[" + index + "]"
+        );
+    }
+    public static By CreateByXpathIndex(String text, String index) {
+        return By.xpath(
+                "(//*[text()='" + text + "'])[" + index + "]"
+        );
+    }
+
+    public static By CreateByXpathIndexContains(String text, String index) {
+        return By.xpath(
+                "(//*[contains(normalize-space(.),'" + text + "')])[" + index + "]"
+        );
+    }
     //endregion - Basic create methods -
 
     //region - Custom methods -
@@ -85,6 +102,8 @@ public class SelectByText {
         return SelectByXpath.CreateByElementByXpath("//*[text()='" + text + "']");
 
     }
+
+
 
     //endregion - Custom methods -
 }

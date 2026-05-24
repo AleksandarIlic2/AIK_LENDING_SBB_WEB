@@ -134,7 +134,7 @@ public class Hooks {
                     DataManager.resultContainer.remove(forRemove);
                 if(toAdd)
                     DataManager.resultContainer.add(nh);
-                Base.closeDriver();
+                //Base.closeDriver();
             } catch (Exception e) {
                 String errorMessage = "";
                 try {
@@ -176,7 +176,7 @@ public class Hooks {
                     DataManager.resultContainer.remove(forRemove);
                 if(toAdd)
                     DataManager.resultContainer.add(nh);
-                Base.closeDriver();
+                //Base.closeDriver();
             }
         }
 
