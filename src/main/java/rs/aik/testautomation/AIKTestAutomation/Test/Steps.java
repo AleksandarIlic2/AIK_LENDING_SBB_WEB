@@ -1,5 +1,4 @@
 package rs.aik.testautomation.AIKTestAutomation.Test;
-import io.cucumber.java.en_scouse.An;
 import jakarta.mail.MessagingException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -12,9 +11,7 @@ import rs.aik.testautomation.AIKTestAutomation.Action.RoutineHelper;
 import rs.aik.testautomation.AIKTestAutomation.Helpers.EmailReaderService;
 import rs.aik.testautomation.AIKTestAutomation.JS.JSHelpers;
 import rs.aik.testautomation.AIKTestAutomation.Selectors.*;
-import rs.aik.testautomation.AIKTestAutomation.Action.*;
 import rs.aik.testautomation.AIKTestAutomation.Helpers.Utilities;
-import rs.aik.testautomation.AIKTestAutomation.Selectors.*;
 import rs.aik.testautomation.AIKTestAutomation.Wait.WaitHelpers;
 import rs.aik.testautomation.AIKTestAutomation.Core.Base;
 import rs.aik.testautomation.AIKTestAutomation.Data.DataManager;
@@ -33,6 +30,8 @@ import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 import static rs.aik.testautomation.AIKTestAutomation.Core.Base.driver;
+import static rs.aik.testautomation.AIKTestAutomation.Core.Base.driverInitialized;
+
 
 public class Steps {
     //region - Parameters -
@@ -1449,8 +1448,8 @@ public class Steps {
         hp.ClickOnElement(element);
     }
 
-    @And("Select {string} as identifier type")
-    public void selectAsIdentifierType(String identifier) throws Throwable {
+    @And("Select {string} as identifier type 2")
+    public void selectAsIdentifierType2(String identifier) throws Throwable {
         WebDriverWait wait = new WebDriverWait(Base.driver, 10);
         wait.pollingEvery(Duration.ofMillis(500));
 
@@ -1493,6 +1492,46 @@ public class Steps {
         //Base.driver.switchTo().defaultContent();
         //System.out.println("Vracen na defaultContent");
     }
+
+    @And("Select {string} as identifier type")
+
+    public void selectAsIdentifierType(String identifier) throws Throwable {
+
+        WaitHelpers.waitForSeconds(5);
+
+        if (identifier.equals("TIN")){
+
+            WebElement element = driver.findElement(By.xpath("//div[contains(text(),'TIN')]"));
+
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+
+        } else if (identifier.equals("CRN")){
+
+            driver.switchTo().frame(0);
+
+            WebDriverWait wait = new WebDriverWait(driver, 10);
+
+            WebElement element = wait.until(
+
+                    ExpectedConditions.elementToBeClickable(
+
+                            By.xpath("//div[contains(@class,'toggle-option') and normalize-space(text())='CRN']")
+
+                    )
+
+            );
+
+            element.click();
+
+        } else {
+
+            System.out.println("Identifier type provided does not match with available identifier types");
+
+        }
+
+    }
+
+
 
     @And("Enter {string} from Excel {string}")
     public void enterFromExcel(String columnName, String rowindex) throws Throwable {
@@ -2049,7 +2088,7 @@ public class Steps {
     @And("Check if consents are displayed and not checked")
     public void checkIfConsentsAreDisplayedAndNotChecked() {
 
-        List<WebElement> consentRows = driver.findElements(By.cssSelector(".consent-checkbox-label"));
+        List<WebElement> consentRows = Base.driver.findElements(By.cssSelector(".consent-checkbox-label"));
         // ocekujemo tačno 3 obavezna consenta
         Assert.assertEquals(3,consentRows.size());
 
