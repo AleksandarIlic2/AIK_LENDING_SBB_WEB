@@ -35,7 +35,7 @@ Feature: Radionica
 
     #KORAK 10-19  - Na ekranu„Consent “ prikazane su sve tri saglasnosti, nisu cekirane, ...
     And Click on button "Continue"
-
+    #And Switch to default content
     And Check if consents are displayed and not checked
     And Check if continue button is disabled
     And Validate Select all consents
@@ -80,8 +80,8 @@ Feature: Radionica
 
 
     # Koraci 8,9,10 iz testa, useri: mb: 20024623, mb: 06290965
-@Vise_Vlasnika_Test
-Scenario Outline: Vise_Vlasnika_Test
+@More_Owners
+Scenario Outline: More_Owners
 
     #KORAK 1 unos validnih podataka, Continue i Confirm your role str se otvara
   Given Open Login page
