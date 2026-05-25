@@ -1444,8 +1444,19 @@ public class Steps {
 
     @And("Click on create button for process")
     public void clickOnCreateButtonForProcess() throws Throwable {
+        WebDriverWait wait = new WebDriverWait(Base.driver, 20);
+        wait.pollingEvery(Duration.ofMillis(500));
+
+        // Samo klikni, bez čitanja src pre klika
         WebElement element = SelectById.CreateElementById("save-button");
         hp.ClickOnElement(element);
+
+        // Vrati se na defaultContent i čekaj da se iframe pojavi
+        Base.driver.switchTo().defaultContent();
+        wait.until(webDriver -> webDriver.findElements(By.tagName("iframe")).size() > 0);
+
+        WebElement iframe = Base.driver.findElement(By.tagName("iframe"));
+        System.out.println("Iframe src nakon klika: " + iframe.getAttribute("src"));
     }
 
     @And("Select {string} as identifier type 2")
@@ -1453,44 +1464,50 @@ public class Steps {
         WebDriverWait wait = new WebDriverWait(Base.driver, 10);
         wait.pollingEvery(Duration.ofMillis(500));
 
-        // Uvek se vrati na defaultContent kao pocetno stanje
         Base.driver.switchTo().defaultContent();
 
-        // Debug
-        System.out.println("Trenutni URL: " + Base.driver.getCurrentUrl());
-        System.out.println("Broj iframeova: " + Base.driver.findElements(By.tagName("iframe")).size());
+        // Čekaj iframe
+        wait.until(webDriver -> webDriver.findElements(By.tagName("iframe")).size() > 0);
+        WebElement iframe = wait.until(
+                ExpectedConditions.presenceOfElementLocated(By.tagName("iframe"))
+        );
+        Base.driver.switchTo().frame(iframe);
 
-        // Pokusaj da nadjes element direktno na glavnoj stranici
+        // Pokusaj da nadjes element
         List<WebElement> elements = Base.driver.findElements(
                 By.xpath("//div[contains(@class,'toggle-option')]")
         );
 
-        // Ako ne nadje na glavnoj stranici, uđi u iframe
+        // Ako ne nadje, refresh i pokusaj ponovo
         if (elements.isEmpty()) {
-            System.out.println("Elementi nisu nadjeni na glavnoj stranici, pokusavam kroz iframe...");
+            System.out.println("Elementi nisu nadjeni, radim refresh...");
+            Base.driver.switchTo().defaultContent();
+            Base.driver.navigate().refresh();
+
+            // Čekaj da se stranica ponovo učita
+            wait.until(webDriver -> ((JavascriptExecutor) webDriver)
+                    .executeScript("return document.readyState").equals("complete"));
+
+            // Čekaj novi iframe
             wait.until(webDriver -> webDriver.findElements(By.tagName("iframe")).size() > 0);
-            WebElement iframe = wait.until(
+            iframe = wait.until(
                     ExpectedConditions.presenceOfElementLocated(By.tagName("iframe"))
             );
             Base.driver.switchTo().frame(iframe);
-            System.out.println("Usao u iframe");
-        } else {
-            System.out.println("Elementi nadjeni na glavnoj stranici");
         }
 
-        // Trazi konkretan element i klikni
+        // Klikni na element
         String xpathText = identifier.equals("TIN") ? "TIN" : "CRN";
         WebElement element = wait.until(
-                ExpectedConditions.elementToBeClickable(
+                ExpectedConditions.presenceOfElementLocated(
                         By.xpath("//div[contains(@class,'toggle-option') and normalize-space(text())='" + xpathText + "']")
                 )
         );
-        element.click();
+
+        ((JavascriptExecutor) Base.driver).executeScript("arguments[0].click();", element);
         System.out.println("Kliknuto na: " + xpathText);
 
-        // Vrati se na defaultContent na kraju
         //Base.driver.switchTo().defaultContent();
-        //System.out.println("Vracen na defaultContent");
     }
 
     @And("Select {string} as identifier type")
@@ -2080,13 +2097,34 @@ public class Steps {
 
     @And("Assert there are no other info in confirm your role page")
     public void assertThereAreNoOtherInfoInConfirmYourRolePage() {
+        WebDriverWait wait = new WebDriverWait(Base.driver, 10);
+        wait.pollingEvery(Duration.ofMillis(500));
 
-        List<WebElement> fields = driver.findElements(By.xpath("//div[@class='screen-wrapper']/div"));
-        Assert.assertEquals(2,fields.size());
+        // Resetuj kontekst i uđi u iframe
+        Base.driver.switchTo().defaultContent();
+        wait.until(webDriver -> webDriver.findElements(By.tagName("iframe")).size() > 0);
+        WebElement iframe = wait.until(
+                ExpectedConditions.presenceOfElementLocated(By.tagName("iframe"))
+        );
+        Base.driver.switchTo().frame(iframe);
+
+        // Čekaj da se screen-wrapper učita
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='screen-wrapper']")));
+
+        // Dohvati elemente i assertuj
+        List<WebElement> fields = Base.driver.findElements(By.xpath("//div[@class='screen-wrapper']/div"));
+        System.out.println("Broj elemenata u screen-wrapper: " + fields.size());
+        Assert.assertEquals(2, fields.size());
+
+        //Base.driver.switchTo().defaultContent();
     }
 
     @And("Check if consents are displayed and not checked")
     public void checkIfConsentsAreDisplayedAndNotChecked() {
+
+        // Čekaj da se screen-wrapper učita
+        //wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='screen-wrapper']")));
+
 
         List<WebElement> consentRows = Base.driver.findElements(By.cssSelector(".consent-checkbox-label"));
         // ocekujemo tačno 3 obavezna consenta
@@ -2172,43 +2210,41 @@ public class Steps {
 
     }
     @And("Validate Continue button disabled withouth all consents")
-    public void validateContinueButtonDisabledWithoutAllConsents() {
-// TODO: PROVERITI OVU FUNKCIJU
-      //  public void validateContinueButtonDisabledWithoutAllRequiredConsents() {
+    public void validateContinueButtonDisabledWithoutAllRequiredConsents() {
 
-//            List<WebElement> consentCheckboxes = driver.findElements(
-//                    By.cssSelector(".consent-checkbox-label input[type='checkbox']")
-//            );
-//
-//            WebElement continueButton = driver.findElement(
-//                    By.cssSelector("button.primary")
-//            );
-//
-//           //ako nijedan obavezni consent nije cekiran - continue disabled
-//            for (WebElement checkbox : consentCheckboxes) {
-//
-//                if (checkbox.isSelected()) {
-//                    checkbox.click();
-//                }
-//            }
-//
-//            Assert.assertFalse("Continue button should NOT be enabled when no consents are selected",continueButton.isEnabled());
-//
-//            //jedan cekiran - continue disabled
-//
-//            consentCheckboxes.get(0).click();
-//
-//            Assert.assertFalse("Continue button should NOT be enabled when only one consent is selected",continueButton.isEnabled());
-//
-//            consentCheckboxes.get(0).click();
-//
-//            //dva cekirana - continue disabled
-//
-//            consentCheckboxes.get(0).click();
-//            consentCheckboxes.get(1).click();
-//            Assert.assertFalse("Continue button should NOT be enabled when not all required consents are selected",continueButton.isEnabled());
-//        }
-    }
+            List<WebElement> consentCheckboxes = driver.findElements(
+                    By.cssSelector(".consent-checkbox-label input[type='checkbox']")
+            );
+
+            WebElement continueButton = driver.findElement(
+                    By.cssSelector("button.primary")
+            );
+
+           //ako nijedan obavezni consent nije cekiran - continue disabled
+            for (WebElement checkbox : consentCheckboxes) {
+
+                if (checkbox.isSelected()) {
+                    checkbox.click();
+                }
+            }
+
+            Assert.assertFalse("Continue button should NOT be enabled when no consents are selected",continueButton.isEnabled());
+
+            //jedan cekiran - continue disabled
+
+            consentCheckboxes.get(0).click();
+
+            Assert.assertFalse("Continue button should NOT be enabled when only one consent is selected",continueButton.isEnabled());
+
+            consentCheckboxes.get(0).click();
+
+            //dva cekirana - continue disabled
+
+            consentCheckboxes.get(0).click();
+            consentCheckboxes.get(1).click();
+            Assert.assertFalse("Continue button should NOT be enabled when not all required consents are selected",continueButton.isEnabled());
+        }
+
 
     @And("Validate Continue button enabled after all consents")
     public void validateContinueButtonEnabledAfterAllConsents() {
@@ -2324,4 +2360,48 @@ public class Steps {
         }
     }
 
+    @And("Assert that your request was not approved page is loaded")
+    public void assertThatYourRequestWasNotApprovedPageIsLoaded() throws InterruptedException {
+        WebDriverWait wait = new WebDriverWait(Base.driver, 10);
+
+        // Step 1: Wait for page to fully load
+        wait.pollingEvery(Duration.ofMillis(500));
+
+        wait.until(webDriver -> {
+            ((JavascriptExecutor) webDriver)
+                    .executeScript("return document.readyState").equals("complete");
+            return webDriver.findElements(By.tagName("iframe")).size() > 0;
+        });
+
+
+        // Step 2: Wait for iframe to appear in DOM
+        WebElement iframe = wait.until(
+                ExpectedConditions.presenceOfElementLocated(By.tagName("iframe"))
+        );
+
+        // Step3: Switch into it
+        Base.driver.switchTo().frame(iframe);
+        By el = SelectByXpath.CreateByElementByXpath("//*[text()='Unfortunately, your request was not approved.']");
+        WaitHelpers.WaitForElement(el);
+        Base.driver.switchTo().defaultContent();
+    }
+
+    @And("Switch to default content")
+    public void switchToDefaultContent() {
+        Base.driver.switchTo().defaultContent();
+    }
+
+    @And("Wait for iframe to load")
+    public void waitForIframeToLoad() throws Throwable {
+        WebDriverWait wait = new WebDriverWait(Base.driver, 20);
+        wait.pollingEvery(Duration.ofMillis(500));
+
+        Base.driver.switchTo().defaultContent();
+
+        wait.until(webDriver -> webDriver.findElements(By.tagName("iframe")).size() > 0);
+
+        // Samo ispisi src da vidimo sta pise
+        WebElement iframe = Base.driver.findElement(By.tagName("iframe"));
+        System.out.println("iframe src: " + iframe.getAttribute("src"));
+    }
 }
