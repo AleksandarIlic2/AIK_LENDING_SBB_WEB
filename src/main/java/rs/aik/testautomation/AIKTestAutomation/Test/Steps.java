@@ -2082,9 +2082,26 @@ public class Steps {
 
     @And("Check if consents are displayed and not checked")
     public void checkIfConsentsAreDisplayedAndNotChecked() {
+        WebDriverWait wait = new WebDriverWait(Base.driver, 30);
+        wait.pollingEvery(Duration.ofMillis(500));
 
-        // Čekaj da se screen-wrapper učita
-        //wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@class='screen-wrapper']")));
+        Base.driver.switchTo().defaultContent();
+
+        // Čekaj da iframe src sadrži personProspectConsents - znači prava stranica je učitana
+        wait.until(webDriver -> {
+            List<WebElement> iframes = webDriver.findElements(
+                    By.xpath("//iframe[contains(@src,'personProspectConsents')]")
+            );
+            System.out.println("Trazim iframe sa personProspectConsents, nadjen: " + iframes.size());
+            return iframes.size() > 0;
+        });
+
+        // Sad uđi u pravi iframe
+        wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(
+                By.xpath("//iframe[contains(@src,'personProspectConsents')]")
+        ));
+        System.out.println("Usao u pravi iframe");
+
 
 
         List<WebElement> consentRows = Base.driver.findElements(By.cssSelector(".consent-checkbox-label"));
@@ -2123,12 +2140,12 @@ public class Steps {
         }
 
         // Select all consents
-        WebElement selectAllCheckbox = driver.findElement(
+        WebElement selectAllCheckbox = Base.driver.findElement(
                 By.xpath("//span[contains(text(),'Select all consents')]/preceding::input[@type='checkbox'][1]")
         );
         Assert.assertFalse("'Select all consents' checkbox should NOT be selected",selectAllCheckbox.isSelected());
 
-        WebElement selectAllText = driver.findElement(
+        WebElement selectAllText = Base.driver.findElement(
                 By.xpath("//span[contains(text(),'Select all consents')]")
         );
 
@@ -2149,11 +2166,11 @@ public class Steps {
     @And("Validate Select all consents")
     public void validateSelectAllConsents() {
 
-        WebElement selectAllCheckbox = driver.findElement(
+        WebElement selectAllCheckbox = Base.driver.findElement(
                 By.cssSelector("input[data-bind*='selectAllConsents']")
         );
 
-        List<WebElement> consentCheckboxes = driver.findElements(
+        List<WebElement> consentCheckboxes = Base.driver.findElements(
                 By.cssSelector(".consent-checkbox-label input[type='checkbox']")
         );
 
@@ -2173,11 +2190,11 @@ public class Steps {
     @And("Validate Continue button disabled withouth all consents")
     public void validateContinueButtonDisabledWithoutAllRequiredConsents() {
 
-            List<WebElement> consentCheckboxes = driver.findElements(
+            List<WebElement> consentCheckboxes = Base.driver.findElements(
                     By.cssSelector(".consent-checkbox-label input[type='checkbox']")
             );
 
-            WebElement continueButton = driver.findElement(
+            WebElement continueButton = Base.driver.findElement(
                     By.cssSelector("button.primary")
             );
 
@@ -2210,7 +2227,7 @@ public class Steps {
     @And("Validate Continue button enabled after all consents")
     public void validateContinueButtonEnabledAfterAllConsents() {
 
-        List<WebElement> consentCheckboxes = driver.findElements(By.cssSelector(".consent-checkbox-label input[type='checkbox']"));
+        List<WebElement> consentCheckboxes = Base.driver.findElements(By.cssSelector(".consent-checkbox-label input[type='checkbox']"));
 
         for (WebElement checkbox : consentCheckboxes) {
             if (!checkbox.isSelected()) {
@@ -2218,7 +2235,7 @@ public class Steps {
             }
         }
 
-        WebElement continueButton = driver.findElement(
+        WebElement continueButton = Base.driver.findElement(
                 By.cssSelector("button.primary")
         );
 
@@ -2229,13 +2246,13 @@ public class Steps {
 
     @And("Confirm popup for cancel")
     public void confirmPopupForCancel() {
-        WebElement popUp = driver.findElement(By.className("popup"));
+        WebElement popUp = Base.driver.findElement(By.className("popup"));
         popUp.isDisplayed();
 
-        WebElement continueRequest = driver.findElement(By.xpath("//button[contains(@text,\"Continue with your request\")]"));
+        WebElement continueRequest = Base.driver.findElement(By.xpath("//button[contains(text(),\"Continue with your request\")]"));
         continueRequest.isDisplayed();
         continueRequest.isEnabled();
-        WebElement withdraw = driver.findElement(By.xpath("//button[contains(@text,\"Withdraw your request\")]"));
+        WebElement withdraw = Base.driver.findElement(By.xpath("//button[contains(text(),\"Withdraw your request\")]"));
         withdraw.isDisplayed();
         withdraw.isEnabled();
 

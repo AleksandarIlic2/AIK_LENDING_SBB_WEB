@@ -35,7 +35,7 @@ Feature: Radionica
 
     #KORAK 10-19  - Na ekranu„Consent “ prikazane su sve tri saglasnosti, nisu cekirane, ...
     And Click on button "Continue"
-    #And Switch to default content
+    #And Wait for "20" seconds
     And Check if consents are displayed and not checked
     And Check if continue button is disabled
     And Validate Select all consents

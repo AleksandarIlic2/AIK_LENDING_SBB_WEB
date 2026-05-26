@@ -68,7 +68,7 @@ public class Base {
         // Release (any) resources
         // Try to quit and close driver
         if(driver !=null) {
-            driver.quit();
+            //driver.quit();
         }
     }
 
