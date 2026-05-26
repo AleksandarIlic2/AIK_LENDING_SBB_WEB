@@ -1459,8 +1459,8 @@ public class Steps {
         System.out.println("Iframe src nakon klika: " + iframe.getAttribute("src"));
     }
 
-    @And("Select {string} as identifier type 2")
-    public void selectAsIdentifierType2(String identifier) throws Throwable {
+    @And("Select {string} as identifier type")
+    public void selectAsIdentifierType(String identifier) throws Throwable {
         WebDriverWait wait = new WebDriverWait(Base.driver, 10);
         wait.pollingEvery(Duration.ofMillis(500));
 
@@ -1510,43 +1510,43 @@ public class Steps {
         //Base.driver.switchTo().defaultContent();
     }
 
-    @And("Select {string} as identifier type")
-
-    public void selectAsIdentifierType(String identifier) throws Throwable {
-
-        WaitHelpers.waitForSeconds(5);
-
-        if (identifier.equals("TIN")){
-
-            WebElement element = driver.findElement(By.xpath("//div[contains(text(),'TIN')]"));
-
-            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
-
-        } else if (identifier.equals("CRN")){
-
-            driver.switchTo().frame(0);
-
-            WebDriverWait wait = new WebDriverWait(driver, 10);
-
-            WebElement element = wait.until(
-
-                    ExpectedConditions.elementToBeClickable(
-
-                            By.xpath("//div[contains(@class,'toggle-option') and normalize-space(text())='CRN']")
-
-                    )
-
-            );
-
-            element.click();
-
-        } else {
-
-            System.out.println("Identifier type provided does not match with available identifier types");
-
-        }
-
-    }
+//    @And("Select {string} as identifier type")
+//
+//    public void selectAsIdentifierType(String identifier) throws Throwable {
+//
+//        WaitHelpers.waitForSeconds(5);
+//
+//        if (identifier.equals("TIN")){
+//
+//            WebElement element = driver.findElement(By.xpath("//div[contains(text(),'TIN')]"));
+//
+//            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+//
+//        } else if (identifier.equals("CRN")){
+//
+//            driver.switchTo().frame(0);
+//
+//            WebDriverWait wait = new WebDriverWait(driver, 10);
+//
+//            WebElement element = wait.until(
+//
+//                    ExpectedConditions.elementToBeClickable(
+//
+//                            By.xpath("//div[contains(@class,'toggle-option') and normalize-space(text())='CRN']")
+//
+//                    )
+//
+//            );
+//
+//            element.click();
+//
+//        } else {
+//
+//            System.out.println("Identifier type provided does not match with available identifier types");
+//
+//        }
+//
+//    }
 
 
 
@@ -2226,7 +2226,7 @@ public class Steps {
         }
 
     }
-    @And("Validate Continue button disabled withouth all consents")
+    @And("Validate Continue button disabled without all consents")
     public void validateContinueButtonDisabledWithoutAllRequiredConsents() {
 
             List<WebElement> consentCheckboxes = Base.driver.findElements(
@@ -2420,5 +2420,92 @@ public class Steps {
         // Samo ispisi src da vidimo sta pise
         WebElement iframe = Base.driver.findElement(By.tagName("iframe"));
         System.out.println("iframe src: " + iframe.getAttribute("src"));
+    }
+
+    @And("Assert page {string} is loaded")
+    public void assertPageIsLoaded(String page) throws InterruptedException {
+        WebDriverWait wait = new WebDriverWait(Base.driver, 10);
+
+        // Step 1: Wait for page to fully load
+        wait.pollingEvery(Duration.ofMillis(500));
+
+        wait.until(webDriver -> {
+            ((JavascriptExecutor) webDriver)
+                    .executeScript("return document.readyState").equals("complete");
+            return webDriver.findElements(By.tagName("iframe")).size() > 0;
+        });
+
+
+        // Step 2: Wait for iframe to appear in DOM
+        WebElement iframe = wait.until(
+                ExpectedConditions.presenceOfElementLocated(By.tagName("iframe"))
+        );
+
+        // Step3: Switch into it
+        Base.driver.switchTo().frame(iframe);
+        By el = SelectByXpath.CreateByElementByXpath("//*[contains(text(),'" + page + "')]");
+
+        WaitHelpers.WaitForElement(el);
+        WaitHelpers.waitForSeconds(3);
+        //driver.switchTo().defaultContent();
+
+    }
+
+
+    @And("Enter valid user email from excel {string} columnname {string} in company review page")
+    public void enterValidUserEmailFromExcelColumnnameInCompanyReviewPage(String rowindex, String columnName) throws Throwable {
+        String email = DataManager.getDataFromHashDatamap(rowindex, columnName);
+        String xPathEmail = "//input[@placeholder=\"name@example.com\"]";
+        WebElement el = SelectByXpath.CreateElementByXpath(xPathEmail);
+        el.sendKeys(email);
+
+    }
+
+    @And("Enter valid user phone number from excel {string} columnname {string} in company review page")
+    public void enterValidUserPhoneNumberFromExcelColumnnameInCompanyReviewPage(String rowindex, String columnName) throws Throwable {
+        String phoneNumber = DataManager.getDataFromHashDatamap(rowindex, columnName);
+        String xPathPhoneNumber = "//input[contains(@data-bind, \"displayMobile\")]";
+        WebElement el = SelectByXpath.CreateElementByXpath(xPathPhoneNumber);
+        el.sendKeys(phoneNumber);
+    }
+
+    @And("Enter invalid user email and phone number in company review page")
+    public void enterInvalidUserEmailInCompanyReviewPage() throws Throwable {
+        String xPathPhoneNumber = "//input[contains(@data-bind, \"displayMobile\")]";
+        WebElement el_phone = SelectByXpath.CreateElementByXpath(xPathPhoneNumber);
+        String xPathInvalidMail = "(//*[text()='Please enter a valid email address'])[1]";
+        String email_1 = "test";
+        String xPathEmail = "//input[@placeholder=\"name@example.com\"]";
+        WebElement el = SelectByXpath.CreateElementByXpath(xPathEmail);
+        el.sendKeys(email_1);
+        el_phone.click();
+        WebElement invalidMailMessage = SelectByXpath.CreateElementByXpath(xPathInvalidMail);
+        Assert.assertEquals("Please enter a valid email address",invalidMailMessage.getText());
+        el.clear();
+        String email_2 = "test@";
+        el.sendKeys(email_2);
+        invalidMailMessage = SelectByXpath.CreateElementByXpath(xPathInvalidMail);
+        Assert.assertEquals("Please enter a valid email address",invalidMailMessage.getText());
+        el.clear();
+        String email_3 = "@gmail.com";
+        el.sendKeys(email_3);
+        invalidMailMessage = SelectByXpath.CreateElementByXpath(xPathInvalidMail);
+        Assert.assertEquals("Please enter a valid email address",invalidMailMessage.getText());
+
+        // phone number
+
+        String xPathInvalidPhone = "(//*[text()='Please enter a valid mobile number'])[1]";
+        WebElement el_2 = SelectByXpath.CreateElementByXpath(xPathPhoneNumber);
+        String phone_1 = "111111111111111111111";
+        el_2.sendKeys(phone_1);
+        invalidMailMessage = SelectByXpath.CreateElementByXpath(xPathInvalidPhone);
+        Assert.assertEquals("Please enter a valid mobile number",invalidMailMessage.getText());
+
+        el_2.clear();
+        String phone_2 = "55555";
+        el_2.sendKeys(phone_2);
+        invalidMailMessage = SelectByXpath.CreateElementByXpath(xPathInvalidPhone);
+        Assert.assertEquals("Please enter a valid mobile number",invalidMailMessage.getText());
+
     }
 }
